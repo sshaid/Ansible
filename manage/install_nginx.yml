@@ -1,0 +1,37 @@
+--- 
+- name: Install and start Nginx on web servers 
+  hosts: web 
+  become: yes 
+  gather_facts: yes 
+ 
+  tasks: 
+    - name: Update apt cache 
+      apt: 
+        update_cache: yes 
+        cache_valid_time: 600 
+ 
+    - name: Install Nginx 
+      apt: 
+        name: nginx 
+        state: present 
+ 
+    - name: Enable and start Nginx service 
+      service: 
+        name: nginx 
+        state: started 
+        enabled: yes 
+ 
+    - name: Deploy a simple HTML page 
+      copy: 
+        dest: /var/www/html/index.html 
+        content: | 
+          <html> 
+            <head><title>Ansible Nginx Demo</title></head> 
+            <body> 
+              <h1>Hello from {{ inventory_hostname }}</h1> 
+              <p>Deployed via Ansible </p> 
+            </body> 
+          </html> 
+        owner: www-data 
+        group: www-data 
+        mode: '0644' 
